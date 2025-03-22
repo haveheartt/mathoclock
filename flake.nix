@@ -26,7 +26,39 @@
     
             # ci/cd
             jenkins
-          ];
+ FFROM jenkins/jenkins:lts
+
+USER root
+
+# Install base tools (Git, SSH client, Curl, Rust)
+RUN apt-get update && apt-get install -y \
+    git \
+    openssh-client \
+    curl \
+    && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
+    && rm -rf /var/lib/apt/lists/*
+
+# Ensure PATH includes Cargo for jenkins user
+ENV PATH="/root/.cargo/bin:${PATH}"
+RUN echo ". $HOME/.cargo/env" >> /home/jenkins/.bashrc
+
+USER jenkinsROM jenkins/jenkins:lts
+
+USER root
+
+# Install base tools (Git, SSH client, Curl, Rust)
+RUN apt-get update && apt-get install -y \
+    git \
+    openssh-client \
+    curl \
+    && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
+    && rm -rf /var/lib/apt/lists/*
+
+# Ensure PATH includes Cargo for jenkins user
+ENV PATH="/root/.cargo/bin:${PATH}"
+RUN echo ". $HOME/.cargo/env" >> /home/jenkins/.bashrc
+
+USER jenkins         ];
 
           shellHook = ''
             export JUPYTER_CONFIG_DIR="$HOME/.jupyter"
