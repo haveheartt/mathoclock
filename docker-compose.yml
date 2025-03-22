@@ -1,0 +1,20 @@
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    user: root
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+    networks:
+      - app-network
+
+volumes:
+  jenkins_home:
+
+networks:
+  app-network:
+    driver: bridge
