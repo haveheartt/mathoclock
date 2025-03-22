@@ -62,8 +62,8 @@ pipeline {
         stage('Commit Artifacts') {
             steps {
                 script {
-                    sh 'git config user.name "guilherme"'
-                    sh 'git config user.email "guilhermev2huehue@gmail.com"'
+                    sh 'git config user.name "jenkins"'
+                    sh 'git config user.email "jenkins@mathoclock"'
 
                     sh 'git add api/Cargo.lock || true'
                     sh 'git diff --staged --quiet || git commit -m "CI: Update Cargo.lock from build"'
