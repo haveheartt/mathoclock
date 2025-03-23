@@ -11,31 +11,43 @@ pipeline {
         }
         stage('Build Backend') {
             steps {
-                dir('api') {  // Change to the api directory
+                dir('api') {
                     sh 'cargo build --release'
                 }
             }
         }
         stage('Test Backend') {
             steps {
-                dir('api') {  // Change to the api directory
+                dir('api') {
                     sh 'cargo test'
                 }
             }
         }
         stage('Commit Artifacts') {
+            when {
+                expression {
+                    currentBuild.result == null || currentBuild.result == 'SUCCESS'
+                }
+            }
             steps {
                 script {
-                    dir('api') {  // Change to the api directory for Cargo.lock
+                    dir('api') {
                         sh 'git config user.name "Jenkins CI"'
                         sh 'git config user.email "jenkins@mathoclock"'
                         sh 'git add Cargo.lock || true'
-                        sh 'git diff --staged --quiet || git commit -m "CI: Update Cargo.lock"'
+                        // Only commit if there are changes
+                        sh '''
+                            if ! git diff --staged --quiet; then
+                                git commit -m "CI: Update Cargo.lock after successful build and test"
+                            else
+                                echo "No changes to commit"
+                            fi
+                        '''
                         withCredentials([sshUserPrivateKey(credentialsId: 'github-ssh', keyFileVariable: 'SSH_KEY')]) {
                             sh '''
                                 eval "$(ssh-agent -s)"
                                 ssh-add $SSH_KEY
-                                git push origin main
+                                git push origin main || echo "Nothing to push"
                             '''
                         }
                     }
@@ -44,8 +56,11 @@ pipeline {
         }
     }
     post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
         failure {
-            echo "Pipeline failed. Check logs for details."
+            echo 'Pipeline failed. Check logs for details.'
         }
     }
 }
