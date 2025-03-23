@@ -3,9 +3,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.jenkins
+    user: root
+    privileged: true
     ports:
-      - "8080:8080"    # Jenkins UI
-      - "50000:50000"  # Jenkins agent port
+      - "8080:8080"
+      - "50001:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
     environment:

@@ -2,18 +2,17 @@ FROM jenkins/jenkins:lts
 
 USER root
 
-# Install base tools (Git, SSH client, Curl, Rust)
 RUN apt-get update && apt-get install -y \
-    git \
-    openssh-client \
     curl \
-    && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Ensure PATH includes Cargo and set up .bashrc for jenkins user
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
 ENV PATH="/root/.cargo/bin:${PATH}"
-RUN mkdir -p /home/jenkins && chown jenkins:jenkins /home/jenkins \
-    && echo ". $HOME/.cargo/env" >> /home/jenkins/.bashrc \
-    && chown jenkins:jenkins /home/jenkins/.bashrc
+
+RUN rustc --version && cargo --version
 
 USER jenkins
+
+WORKDIR /var/jenkins_home
