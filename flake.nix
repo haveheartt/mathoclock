@@ -10,28 +10,33 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
+        haskellPackages = pkgs.haskellPackages;
       in
       {
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
-            # rust dependencies
+            # Rust dependencies
             rustc
             cargo
             rustfmt
             clippy
             rust-analyzer
+            protobuf
 
-            # agda dependencies
-            agda
-    
-            # ci/cd
+            # Haskell dependencies
+            haskellPackages.ghc
+            haskellPackages.cabal-install
+            haskellPackages.hlint
+            haskellPackages.ormolu
+            haskellPackages.stack
+            # CI/CD
             jenkins
           ];
 
           shellHook = ''
-
-            echo "dale"
+            echo "Welcome to the development shell!"
           '';
         };
-    });
+      }
+    );
 }

@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package mathoclock;
+
+service Mathoclock {
+    rpc GetIntegralProblem (IntegralRequest) returns (IntegralProblem) {}
+    rpc SubmitAnswer (AnswerSubmission) returns (AnswerResponse) {}
+}
+
+message IntegralRequest {
+    enum Difficulty {
+        EASY = 0;
+        MEDIUM = 1;
+        HARD = 2;
+        MIT_BEE = 3;
+    }
+    Difficulty difficulty = 1;
+}
+
+message IntegralProblem {
+    string problem = 1;
+}
+
+message AnswerSubmission {
+    string problem = 1;
+    string answer = 2;
+}
+
+message AnswerResponse {
+    bool correct = 1;
+    string message = 2;
+}

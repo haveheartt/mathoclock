@@ -4,3 +4,18 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+tokio = { version = "1.44.1", features = ["rt-multi-thread", "macros"] }
+tonic = "0.12.3"
+
+[build-dependencies]
+tonic-build = "0.12.3"
+
+# server binary
+[[bin]]
+    name = "server"
+    path = "src/server.rs"
+
+# client binary
+[[bin]]
+    name = "client"
+    path = "src/client.rs"
